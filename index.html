@@ -2,104 +2,74 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Nexus Pro | High Visibility</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Pro | Ultimate Video</title>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --bg: #05070A; --surface: #161920; --primary: #6366F1;
-            --danger: #EF4444; --text: #FFFFFF; --success: #10B981;
+            --bg: #0B0E14; --surface: #1A1D23; --primary: #6366F1;
+            --danger: #EF4444; --text: #F8FAFC; --success: #10B981;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
-        body { 
-            font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); 
-            height: 100vh; display: flex; flex-direction: column; overflow: hidden; 
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
         /* --- Header --- */
-        header { 
-            padding: 15px; display: flex; justify-content: space-between; align-items: center; 
-            background: rgba(0,0,0,0.8); z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-        .pill-group { display: flex; gap: 8px; align-items: center; }
-        .pill { background: var(--surface); padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; border: 1px solid #334155; }
+        header { padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); z-index: 10; }
+        .meeting-info { display: flex; align-items: center; gap: 12px; }
+        .pill { background: var(--surface); padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; border: 1px solid rgba(255,255,255,0.05); }
 
         /* --- Main Layout --- */
-        .main-layout { flex: 1; position: relative; display: flex; overflow: hidden; }
-        .video-container { flex: 1; position: relative; background: #000; }
+        .main-layout { display: flex; flex: 1; position: relative; overflow: hidden; }
+        
+        /* Video Area */
+        .video-container { flex: 1; position: relative; background: #000; display: flex; align-items: center; justify-content: center; }
+        
         #remoteVideo { width: 100%; height: 100%; object-fit: cover; }
-
-        /* Mirrored Local Camera */
+        
+        /* Small Local Camera (Floating) */
         .local-video-wrapper { 
-            position: absolute; top: 15px; right: 15px; 
-            width: 120px; aspect-ratio: 16/9; 
-            border-radius: 12px; overflow: hidden; border: 2px solid var(--primary); 
-            z-index: 50; box-shadow: 0 8px 20px rgba(0,0,0,0.8);
+            position: absolute; top: 20px; right: 20px; 
+            width: 180px; aspect-ratio: 16/9; 
+            background: #222; border-radius: 12px; overflow: hidden; 
+            border: 2px solid var(--primary); z-index: 5;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
         }
-        #localVideo { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+        @media (max-width: 600px) { .local-video-wrapper { width: 120px; top: 10px; right: 10px; } }
 
-        /* --- High Visibility Footer --- */
-        footer { 
-            background: #000; padding: 15px 10px 30px 10px; /* Extra bottom padding for mobile home bars */
-            display: flex; justify-content: center; align-items: center; 
-            gap: 12px; z-index: 200; position: relative;
-        }
-
-        .ctrl-btn { 
-            width: 52px; height: 52px; border-radius: 50%; border: none; 
-            cursor: pointer; background: var(--surface); color: white; 
-            display: flex; align-items: center; justify-content: center; 
-            font-size: 1.4rem; transition: 0.2s;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        }
-
-        .btn-main { 
-            background: var(--primary); width: auto; padding: 0 20px; 
-            border-radius: 26px; font-weight: 700; font-size: 0.9rem;
-        }
-
-        .ctrl-btn:active { transform: scale(0.9); opacity: 0.8; }
-        .ctrl-btn.off { background: var(--danger); }
-
-        /* --- Chat Sidebar (Overlay) --- */
+        /* --- Chat Sidebar --- */
         #chat-sidebar { 
-            position: absolute; right: 0; top: 0; bottom: 0; width: 100%; 
-            background: var(--surface); z-index: 300; display: flex; flex-direction: column;
-            transform: translateX(100%); transition: 0.3s ease;
+            width: 320px; background: var(--surface); display: flex; flex-direction: column;
+            transition: 0.3s; border-left: 1px solid rgba(255,255,255,0.05);
         }
-        #chat-sidebar.active { transform: translateX(0); }
-        #messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
-        .msg { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 12px; font-size: 0.9rem; max-width: 85%; }
-
-        /* Desktop Optimization */
-        @media (min-width: 768px) {
-            .local-video-wrapper { width: 220px; top: 20px; right: 20px; }
-            #chat-sidebar { width: 350px; position: relative; transform: translateX(0); }
-            footer { padding: 20px; }
-        }
-
-        #auth-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 500; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px; }
+        #messages { flex: 1; overflow-y: auto; padding: 15px; font-size: 0.85rem; }
+        .msg { margin-bottom: 10px; background: rgba(255,255,255,0.03); padding: 8px; border-radius: 8px; }
+        
+        /* --- Controls --- */
+        footer { height: 85px; display: flex; justify-content: center; align-items: center; gap: 12px; padding: 0 15px; background: #000; }
+        .ctrl-btn { width: 48px; height: 48px; border-radius: 50%; border: none; cursor: pointer; background: var(--surface); color: white; font-size: 1.2rem; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
+        .ctrl-btn.off { background: var(--danger); }
+        .btn-join { background: var(--primary); width: auto; padding: 0 25px; border-radius: 25px; font-size: 0.9rem; font-weight: 600; }
+        
+        #auth-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 1000; display: flex; justify-content: center; align-items: center; }
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
     <div id="auth-overlay">
-        <h1 style="font-size: 2.5rem; margin-bottom: 10px;">Nexus<span>.io</span></h1>
-        <p style="color: #94a3b8; margin-bottom: 30px; text-align: center;">Vibrant, Secure, Mirror Video</p>
-        <button class="ctrl-btn btn-main" style="height:55px; width:240px;" onclick="loginWithGoogle()">Login with Google</button>
+        <button class="btn-join ctrl-btn" onclick="loginWithGoogle()">Sign in with Google</button>
     </div>
 
     <header>
-        <div class="logo">NEXUS<span>.io</span></div>
-        <div class="pill-group">
-            <div class="pill" id="meetingIdDisp" onclick="copyId()">ID: ---</div>
-            <div class="pill" id="timer">00:00</div>
+        <div class="meeting-info">
+            <div class="pill" id="meetingId">ID: ---</div>
+            <div class="pill"><i class="ph ph-users"></i> <span id="pCount">1</span></div>
+            <div class="pill"><i class="ph ph-clock"></i> <span id="timer">00:00</span></div>
         </div>
+        <button class="btn-join ctrl-btn" style="background:var(--success); font-size:0.7rem;" onclick="addToFriends()"><i class="ph ph-user-plus"></i> Add Partner</button>
     </header>
 
     <div class="main-layout">
@@ -110,28 +80,22 @@
             </div>
         </div>
 
-        <aside id="chat-sidebar">
-            <div style="padding: 20px; background: rgba(0,0,0,0.2); display: flex; justify-content: space-between;">
-                <b>Meeting Chat</b>
-                <button onclick="toggleChat()" style="background:none; border:none; color:white; font-size:1.5rem;"><i class="ph ph-x"></i></button>
-            </div>
+        <aside id="chat-sidebar" class="hidden">
             <div id="messages"></div>
-            <form style="padding: 15px; display: flex; gap: 10px;" id="chat-form">
-                <input type="text" id="chatInput" placeholder="Type..." style="flex:1; padding: 12px; border-radius: 8px; border:none; background:var(--bg); color:white;">
-                <button type="submit" class="ctrl-btn" style="width:45px; height:45px; background:var(--primary);"><i class="ph ph-paper-plane"></i></button>
-            </form>
+            <div style="padding:10px; display:flex; gap:5px;">
+                <input type="text" id="chatInput" style="flex:1; background:#000; border:none; color:white; padding:8px; border-radius:5px;" placeholder="Message...">
+                <button onclick="sendMsg()" class="ctrl-btn" style="width:35px; height:35px;"><i class="ph ph-paper-plane"></i></button>
+            </div>
         </aside>
     </div>
 
     <footer>
         <button class="ctrl-btn" id="muteBtn" onclick="toggleMute()"><i class="ph ph-microphone"></i></button>
         <button class="ctrl-btn" id="camBtn" onclick="toggleCam()"><i class="ph ph-video-camera"></i></button>
-        
-        <button class="ctrl-btn btn-main" onclick="createCall()" id="createBtn">New</button>
-        <button class="ctrl-btn btn-main" style="background:transparent; border:1px solid #444;" onclick="joinCall()" id="joinBtn">Join</button>
-        
-        <button class="ctrl-btn" onclick="toggleChat()"><i class="ph ph-chat-circle"></i></button>
-        <button class="ctrl-btn" style="background:var(--danger);" onclick="window.location.reload()"><i class="ph ph-phone-disconnect"></i></button>
+        <button class="ctrl-btn btn-join" onclick="createCall()" id="createBtn">Start Call</button>
+        <button class="ctrl-btn btn-join" style="background:transparent; border:1px solid #444" onclick="joinCall()" id="joinBtn">Join ID</button>
+        <button class="ctrl-btn" onclick="document.getElementById('chat-sidebar').classList.toggle('hidden')"><i class="ph ph-chat-circle"></i></button>
+        <button class="ctrl-btn" style="background:var(--danger)" onclick="window.location.reload()"><i class="ph ph-phone-disconnect"></i></button>
     </footer>
 
 <script type="module">
@@ -154,16 +118,9 @@
     const provider = new GoogleAuthProvider();
 
     let pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
-    let localStream, currentUser, currentCallId, startTime;
+    let localStream, currentUser, currentCallId;
 
-    onAuthStateChanged(auth, u => { 
-        if(u){ 
-            currentUser=u; 
-            document.getElementById('auth-overlay').classList.add('hidden'); 
-            setupMedia(); 
-        } 
-    });
-
+    onAuthStateChanged(auth, u => { if(u){ currentUser=u; document.getElementById('auth-overlay').classList.add('hidden'); setupMedia(); } });
     window.loginWithGoogle = () => signInWithPopup(auth, provider);
 
     async function setupMedia() {
@@ -173,76 +130,74 @@
         pc.ontrack = e => document.getElementById('remoteVideo').srcObject = e.streams[0];
     }
 
+    // --- Controls ---
     window.toggleMute = () => {
-        const a = localStream.getAudioTracks()[0];
-        a.enabled = !a.enabled;
-        document.getElementById('muteBtn').classList.toggle('off', !a.enabled);
-        document.getElementById('muteBtn').innerHTML = a.enabled ? '<i class="ph ph-microphone"></i>' : '<i class="ph ph-microphone-slash"></i>';
+        const audio = localStream.getAudioTracks()[0];
+        audio.enabled = !audio.enabled;
+        document.getElementById('muteBtn').classList.toggle('off', !audio.enabled);
     };
-
     window.toggleCam = () => {
-        const v = localStream.getVideoTracks()[0];
-        v.enabled = !v.enabled;
-        document.getElementById('camBtn').classList.toggle('off', !v.enabled);
-        document.getElementById('camBtn').innerHTML = v.enabled ? '<i class="ph ph-video-camera"></i>' : '<i class="ph ph-video-camera-slash"></i>';
+        const video = localStream.getVideoTracks()[0];
+        video.enabled = !video.enabled;
+        document.getElementById('camBtn').classList.toggle('off', !video.enabled);
     };
 
-    window.toggleChat = () => document.getElementById('chat-sidebar').classList.toggle('active');
-
+    // --- Call Logic ---
     window.createCall = async () => {
         const c = doc(collection(db, 'calls'));
         currentCallId = c.id;
         pc.onicecandidate = e => e.candidate && addDoc(collection(c, 'offCan'), e.candidate.toJSON());
         const offer = await pc.createOffer();
         await pc.setLocalDescription(offer);
-        await setDoc(c, { offer: { type: offer.type, sdp: offer.sdp } });
-        initMeeting(c.id);
+        await setDoc(c, { offer: { type: offer.type, sdp: offer.sdp }, participants: 1, host: currentUser.uid });
+        startUI(c.id);
         onSnapshot(c, s => {
             const d = s.data();
             if(d?.answer && !pc.currentRemoteDescription) pc.setRemoteDescription(new RTCSessionDescription(d.answer));
+            document.getElementById('pCount').innerText = d?.participants || 1;
         });
     };
 
     window.joinCall = async () => {
-        const id = prompt("ID:"); if(!id) return;
+        const id = prompt("Enter ID:"); if(!id) return;
         currentCallId = id;
         const c = doc(db, 'calls', id);
+        await updateDoc(c, { participants: increment(1) });
         const d = (await getDoc(c)).data();
         pc.onicecandidate = e => e.candidate && addDoc(collection(c, 'ansCan'), e.candidate.toJSON());
         await pc.setRemoteDescription(new RTCSessionDescription(d.offer));
         const ans = await pc.createAnswer();
         await pc.setLocalDescription(ans);
         await updateDoc(c, { answer: { type: ans.type, sdp: ans.sdp } });
-        initMeeting(id);
+        startUI(id);
     };
 
-    function initMeeting(id) {
-        document.getElementById('meetingIdDisp').innerText = `ID: ${id}`;
+    function startUI(id) {
+        document.getElementById('meetingId').innerText = id;
         document.getElementById('createBtn').classList.add('hidden');
         document.getElementById('joinBtn').classList.add('hidden');
-        startTime = Date.now();
-        setInterval(() => {
-            let d = Math.floor((Date.now() - startTime) / 1000);
-            document.getElementById('timer').innerText = `${Math.floor(d/60).toString().padStart(2,'0')}:${(d%60).toString().padStart(2,'0')}`;
-        }, 1000);
-        const q = query(collection(db, 'calls', id, 'chat'), orderBy('time', 'asc'));
-        onSnapshot(q, s => {
+        const qM = query(collection(db, 'calls', id, 'chat'), orderBy('time', 'asc'));
+        onSnapshot(qM, s => {
             const m = document.getElementById('messages'); m.innerHTML = '';
-            s.forEach(doc => m.innerHTML += `<div class="msg"><b>${doc.data().user}</b>${doc.data().txt}</div>`);
+            s.forEach(doc => m.innerHTML += `<div class="msg"><b>${doc.data().user}</b>: ${doc.data().txt}</div>`);
             m.scrollTop = m.scrollHeight;
         });
     }
 
-    document.getElementById('chat-form').onsubmit = async (e) => {
-        e.preventDefault();
+    window.sendMsg = async () => {
         const i = document.getElementById('chatInput'); if(!i.value) return;
         await addDoc(collection(db, 'calls', currentCallId, 'chat'), { txt: i.value, user: currentUser.displayName, time: serverTimestamp() });
         i.value = '';
     };
 
-    window.copyId = () => {
-        navigator.clipboard.writeText(currentCallId).then(() => alert("Copied!"));
-    }
+    window.addToFriends = async () => {
+        if(!currentCallId) return;
+        await addDoc(collection(db, 'users', currentUser.uid, 'friends'), {
+            meetingId: currentCallId,
+            addedAt: serverTimestamp()
+        });
+        alert("Meeting saved to your history!");
+    };
 </script>
 </body>
 </html>
