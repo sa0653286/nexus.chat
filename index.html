@@ -3,93 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Nexus Pro | Stable Chat</title>
+    <title>Nexus Pro | Stable Redirect</title>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-    
     <style>
-        :root {
-            --bg: #05070A; --surface: #161920; --primary: #6366F1;
-            --danger: #EF4444; --text: #FFFFFF; --success: #10B981;
-        }
-
+        :root { --bg: #05070A; --surface: #161920; --primary: #6366F1; --danger: #EF4444; --text: #FFFFFF; --success: #10B981; }
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
         header { padding: 15px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.8); z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .pill { background: var(--surface); padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; border: 1px solid #334155; }
+        .pill { background: var(--surface); padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; border: 1px solid #334155; cursor: pointer; }
 
         .main-layout { flex: 1; position: relative; display: flex; overflow: hidden; }
         .video-container { flex: 1; position: relative; background: #000; }
         #remoteVideo { width: 100%; height: 100%; object-fit: cover; }
 
         .local-video-wrapper { 
-            position: absolute; top: 15px; right: 15px; 
-            width: 120px; aspect-ratio: 16/9; 
+            position: absolute; top: 15px; right: 15px; width: 120px; aspect-ratio: 16/9; 
             border-radius: 12px; overflow: hidden; border: 2px solid var(--primary); 
             z-index: 50; box-shadow: 0 8px 20px rgba(0,0,0,0.8);
         }
         #localVideo { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
 
-        footer { 
-            background: #000; padding: 15px 10px 30px 10px; 
-            display: flex; justify-content: center; align-items: center; 
-            gap: 10px; z-index: 200; position: relative;
-        }
-
-        .ctrl-btn { width: 48px; height: 48px; border-radius: 50%; border: none; cursor: pointer; background: var(--surface); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; transition: 0.2s; }
-        .btn-main { background: var(--primary); width: auto; padding: 0 18px; border-radius: 24px; font-weight: 700; font-size: 0.8rem; }
-        .ctrl-btn.off { background: var(--danger); }
-
         #chat-sidebar { 
-            position: absolute; right: 0; top: 0; bottom: 0; width: 100%; 
-            background: var(--surface); z-index: 300; display: flex; flex-direction: column;
-            transform: translateX(100%); transition: 0.3s ease;
+            position: absolute; right: 0; top: 0; bottom: 0; width: 100%; background: var(--surface); 
+            z-index: 300; display: flex; flex-direction: column; transform: translateX(100%); transition: 0.3s ease; 
         }
         #chat-sidebar.active { transform: translateX(0); }
         #messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
-        .msg { background: rgba(255,255,255,0.07); padding: 12px; border-radius: 12px; font-size: 0.9rem; max-width: 85%; align-self: flex-start; }
+        .msg { background: rgba(255,255,255,0.07); padding: 12px; border-radius: 12px; font-size: 0.9rem; max-width: 85%; }
         .msg.mine { background: var(--primary); align-self: flex-end; }
-        .msg b { display: block; font-size: 0.65rem; opacity: 0.7; margin-bottom: 3px; }
 
-        @media (min-width: 768px) {
-            .local-video-wrapper { width: 220px; }
-            #chat-sidebar { width: 350px; position: relative; transform: translateX(0); }
-        }
+        footer { background: #000; padding: 15px 10px 35px 10px; display: flex; justify-content: center; align-items: center; gap: 10px; z-index: 200; }
+        .ctrl-btn { width: 50px; height: 50px; border-radius: 50%; border: none; cursor: pointer; background: var(--surface); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; transition: 0.2s; }
+        .btn-main { background: var(--primary); width: auto; padding: 0 20px; border-radius: 25px; font-weight: 700; font-size: 0.85rem; }
+        .ctrl-btn.off { background: var(--danger); }
 
-        #auth-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 500; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px; }
+        #auth-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 1000; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px; text-align: center; }
+        @media (min-width: 768px) { .local-video-wrapper { width: 220px; } #chat-sidebar { width: 350px; position: relative; transform: translateX(0); } }
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
     <div id="auth-overlay">
-        <h1>Nexus<span>.io</span></h1>
-        <button class="ctrl-btn btn-main" style="height:50px; width:200px; margin-top:20px" onclick="loginWithGoogle()">Login with Google</button>
+        <h1 style="font-size: 2.5rem;">Nexus<span>.io</span></h1>
+        <p style="color: #94a3b8; margin: 10px 0 30px;">Stable WebRTC & Redirect Login</p>
+        <button class="ctrl-btn btn-main" style="height:55px; width:250px;" onclick="loginWithGoogle()">Login with Google</button>
     </div>
 
     <header>
         <div class="logo">NEXUS<span>.io</span></div>
-        <div class="pill" id="meetingIdDisp" onclick="copyId()">ID: ---</div>
+        <div style="display:flex; gap:10px;">
+            <div class="pill" id="meetingIdDisp" onclick="copyId()">ID: ---</div>
+            <div class="pill" id="timer">00:00</div>
+        </div>
     </header>
 
     <div class="main-layout">
         <div class="video-container">
             <video id="remoteVideo" autoplay playsinline></video>
-            <div class="local-video-wrapper">
-                <video id="localVideo" autoplay muted playsinline></video>
-            </div>
+            <div class="local-video-wrapper"><video id="localVideo" autoplay muted playsinline></video></div>
         </div>
-
         <aside id="chat-sidebar">
-            <div style="padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between;">
-                <b>Chat</b>
-                <button onclick="toggleChat()" style="background:none; border:none; color:white;"><i class="ph ph-x-circle" style="font-size:1.5rem"></i></button>
+            <div style="padding: 20px; border-bottom: 1px solid #334155; display: flex; justify-content: space-between;">
+                <b>Chat</b> <button onclick="toggleChat()" style="background:none; border:none; color:white; font-size:1.5rem;"><i class="ph ph-x"></i></button>
             </div>
             <div id="messages"></div>
             <form id="chat-form" style="padding: 15px; display: flex; gap: 10px;">
-                <input type="text" id="chatInput" placeholder="Type a message..." style="flex:1; padding: 12px; border-radius: 8px; border:none; background:var(--bg); color:white;">
-                <button type="submit" class="ctrl-btn" style="width:45px; height:45px; background:var(--primary);"><i class="ph ph-paper-plane-right"></i></button>
+                <input type="text" id="chatInput" placeholder="Message..." style="flex:1; padding: 12px; border-radius: 8px; border:none; background:var(--bg); color:white;">
+                <button type="submit" class="ctrl-btn" style="width:45px; height:45px; background:var(--primary);"><i class="ph ph-paper-plane"></i></button>
             </form>
         </aside>
     </div>
@@ -98,15 +81,14 @@
         <button class="ctrl-btn" id="muteBtn" onclick="toggleMute()"><i class="ph ph-microphone"></i></button>
         <button class="ctrl-btn" id="camBtn" onclick="toggleCam()"><i class="ph ph-video-camera"></i></button>
         <button class="ctrl-btn btn-main" onclick="createCall()" id="createBtn">New Call</button>
-        <button class="ctrl-btn btn-main" style="background:transparent; border:1px solid #444" onclick="joinCall()" id="joinBtn">Join ID</button>
-        <button class="ctrl-btn" onclick="takeScreenshot()"><i class="ph ph-camera"></i></button>
+        <button class="ctrl-btn btn-main" style="background:transparent; border:1px solid #444" onclick="joinCall()" id="joinBtn">Join</button>
         <button class="ctrl-btn" onclick="toggleChat()"><i class="ph ph-chat-circle"></i></button>
         <button class="ctrl-btn" style="background:var(--danger)" onclick="window.location.reload()"><i class="ph ph-phone-disconnect"></i></button>
     </footer>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+    import { getAuth, signInWithRedirect, getRedirectResult, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
     import { getFirestore, collection, doc, setDoc, onSnapshot, addDoc, getDoc, updateDoc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -124,10 +106,20 @@
     const provider = new GoogleAuthProvider();
 
     let pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
-    let localStream, currentUser, currentCallId;
+    let localStream, currentUser, currentCallId, startTime;
 
-    onAuthStateChanged(auth, u => { if(u){ currentUser=u; document.getElementById('auth-overlay').classList.add('hidden'); setupMedia(); } });
-    window.loginWithGoogle = () => signInWithPopup(auth, provider);
+    // Handle Login Redirect Result
+    getRedirectResult(auth).catch(err => alert("Login Error: " + err.message));
+
+    onAuthStateChanged(auth, u => { 
+        if(u){ 
+            currentUser=u; 
+            document.getElementById('auth-overlay').classList.add('hidden'); 
+            setupMedia(); 
+        } 
+    });
+
+    window.loginWithGoogle = () => signInWithRedirect(auth, provider);
 
     async function setupMedia() {
         localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
@@ -135,6 +127,20 @@
         document.getElementById('localVideo').srcObject = localStream;
         pc.ontrack = e => document.getElementById('remoteVideo').srcObject = e.streams[0];
     }
+
+    window.toggleMute = () => {
+        const a = localStream.getAudioTracks()[0];
+        a.enabled = !a.enabled;
+        document.getElementById('muteBtn').classList.toggle('off', !a.enabled);
+        document.getElementById('muteBtn').innerHTML = a.enabled ? '<i class="ph ph-microphone"></i>' : '<i class="ph ph-microphone-slash"></i>';
+    };
+
+    window.toggleCam = () => {
+        const v = localStream.getVideoTracks()[0];
+        v.enabled = !v.enabled;
+        document.getElementById('camBtn').classList.toggle('off', !v.enabled);
+        document.getElementById('camBtn').innerHTML = v.enabled ? '<i class="ph ph-video-camera"></i>' : '<i class="ph ph-video-camera-slash"></i>';
+    };
 
     window.toggleChat = () => document.getElementById('chat-sidebar').classList.toggle('active');
 
@@ -169,6 +175,11 @@
         document.getElementById('meetingIdDisp').innerText = `ID: ${id}`;
         document.getElementById('createBtn').classList.add('hidden');
         document.getElementById('joinBtn').classList.add('hidden');
+        startTime = Date.now();
+        setInterval(() => {
+            let d = Math.floor((Date.now() - startTime) / 1000);
+            document.getElementById('timer').innerText = `${Math.floor(d/60).toString().padStart(2,'0')}:${(d%60).toString().padStart(2,'0')}`;
+        }, 1000);
         const q = query(collection(db, 'calls', id, 'chat'), orderBy('time', 'asc'));
         onSnapshot(q, s => {
             const m = document.getElementById('messages'); m.innerHTML = '';
@@ -185,37 +196,16 @@
         e.preventDefault();
         const i = document.getElementById('chatInput');
         if(!i.value || !currentCallId) return;
-
-        try {
-            await addDoc(collection(db, 'calls', currentCallId, 'chat'), {
-                txt: i.value,
-                user: currentUser.displayName,
-                uid: currentUser.uid,
-                time: serverTimestamp()
-            });
-            i.value = '';
-        } catch (err) {
-            console.error("Chat error:", err);
-            alert("Check Firestore Rules: Read/Write must be allowed.");
-        }
-    };
-
-    window.takeScreenshot = () => {
-        const video = document.getElementById('remoteVideo');
-        const canvas = document.createElement('canvas');
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        canvas.getContext('2d').drawImage(video, 0, 0);
-        const link = document.createElement('a');
-        link.download = 'nexus-pro-snap.png';
-        link.href = canvas.toDataURL();
-        link.click();
+        await addDoc(collection(db, 'calls', currentCallId, 'chat'), {
+            txt: i.value, user: currentUser.displayName, uid: currentUser.uid, time: serverTimestamp()
+        });
+        i.value = '';
     };
 
     window.copyId = () => {
-        navigator.clipboard.writeText(currentCallId);
-        alert("ID Copied!");
+        navigator.clipboard.writeText(currentCallId).then(() => alert("Copied!"));
     };
 </script>
 </body>
-</html>
+    </html>
+    
